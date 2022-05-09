@@ -297,9 +297,13 @@ Node* searchIterative(Node* head, int key) // Iterative식으로 입력값을 �
 }
 
 
-int freeBST(Node* head)
+int freeBST(Node* head) // 이진탐색트리의 노드에 할당된 메모리를 모두 해제하는 함수
 {
-
+	while(head->left != NULL) // root노드까지 노드 삭제 및 메모리 할당 해제
+	{
+		deleteLeafNode_u(head);
+	}
+	free(head); // head 노드에 할당된 메모리 해제
 }
 
 
@@ -332,9 +336,36 @@ Node* searchIterative_B(Node* head, int key) // 입력값과 동일한 값을 �
 	return NULL; // 입력값을 가진 노드가 없을 경우, NULL 반환
 }
 
-void deleteLeafNode_u(Node* head)
+void deleteLeafNode_u(Node* head) // Leaf노드를 삭제하는 함수
 {
+	Node* p = head;
+	Node* p_B = p;
 
+	// Leaf노드를 탐색
+	while(p->left != NULL || p->right != NULL )
+	{	// 부모노드의 왼쪽 sub트리부터 탐색
+		if(p->left != NULL) 
+		{
+			p_B = p;
+			p = p->left;
+		}
+		else if(p->right != NULL) // 왼쪽 sub트리가 모두 삭제한 후, 오른쪽 sub트리 탐색  
+		{
+			p_B = p;
+			p = p->right;
+		}
+	}
+
+	// Leaf노드의 부모노드의 왼쪽 자식 노드가 존재할 경우
+	if(p_B->left != NULL)
+	{	// 왼쪽 자식 노드를 포인팅하는 부분을 NULL로 변경
+		p_B->left = NULL;
+	}else if(p_B->right != NULL) // Leaf노드의 부모노드의 왼쪽 자식 노드가 존재하지 않고, 오른쪽 자식 노드가 존재할 경우
+	{	// 오른쪽 자식 노드를 포인팅하는 부분을 NULL로 변경
+		p_B->right = NULL;
+	}
+	
+	free(p); // 자식 노드이자 Leaf노드인 노드에 할당된 메모리를 해제
 }
 
 
